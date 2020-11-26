@@ -1,0 +1,19 @@
+{/* <FlatList
+                            data={todos}
+                            keyExtractor={item => item.key}
+                            renderItem={(v) => (
+                                <View style={styles.withTextIcon}>
+                                    <TouchableOpacity onPress={() => this.deleteTodos(v.item.key)}>
+                                        <MaterialIcons
+                                            name='delete'
+                                            color='#fff'
+                                            size={22}
+                                        />
+                                    </TouchableOpacity>
+                                    <Text style={styles.text}>{v.item.title}</Text>
+                                </View>
+                            )
+                            }
+                        /> */}
+
+----------------------app.js----------------
