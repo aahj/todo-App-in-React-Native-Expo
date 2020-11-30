@@ -2,39 +2,34 @@ import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import Header from './Components/Header';
-import { Form, Item, Input, Label } from 'native-base';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import AddTodo from './Components/AddTodo';
+import { Input, Form, Item } from 'native-base';
+
 
 export default class Main extends Component {
     state = {
         todos: [
             {
-                title: 'ali',
+                title: 'aamir',
                 edit: false,
 
             },
             {
-                title: 'India',
+                title: 'Pakistan',
                 edit: false,
             },
             {
-                title: 'Shafqat mehmood',
+                title: 'Shafqat',
                 edit: false,
-            },
-        ],
-        value: ''
-    }
-    handleChange = (e) => {
-        this.setState({
-            value: e
-        })
+            }
+        ]
     }
 
-    add_Todo = () => {
-        let obj = { title: this.state.value }
+    add_Todo = (value) => {
+        let obj = { title: value }
         this.setState({
             todos: [...this.state.todos, obj],
-            value: ''
         })
     }
 
@@ -45,33 +40,41 @@ export default class Main extends Component {
         })
     }
 
+    edit_todos = (index, val) => {
+        this.state.todos[index].edit = true;
+        this.setState({
+            todos: this.state.todos
+        })
+    }
+
+    handle_editChange = (e, i) => {
+        this.state.todos[i].title = e;
+        this.setState({
+            todos: this.state.todos
+        })
+    }
+
+    update_todos = (i) => {
+        this.state.todos[i].edit = false;
+        this.setState({
+            todos: this.state.todos
+        })
+    }
     render() {
-        const { value, todos } = this.state;
+        const { todos } = this.state;
         return (
             <View style={styles.container}>
                 <StatusBar style="auto" />
                 <Header />
-                <View style={styles.add_todo}>
-                    <Form>
-                        <Item floatingLabel>
-                            <Label>add task....</Label>
-                            <Input
-                                style={{ color: '#fff' }}
-                                value={value}
-                                onChangeText={(e) => this.handleChange(e)}
-                            />
-                        </Item>
-                    </Form>
-                    <TouchableOpacity onPress={this.add_Todo} style={styles.btn}>
-                        <Text style={styles.btn_text}>Add</Text>
-                    </TouchableOpacity>
-                </View>
-
+                <AddTodo
+                    add_Todo={this.add_Todo}
+                />
                 <ScrollView>
                     <View style={styles.content}>
                         <View style={styles.items}>
                             {todos.map((v, i) => {
                                 return <View style={styles.withTextIcon}>
+                                    {/* delete */}
                                     <TouchableOpacity onPress={() => this.deleteTodos(i)}>
                                         <MaterialIcons
                                             name='delete'
@@ -79,7 +82,38 @@ export default class Main extends Component {
                                             size={22}
                                         />
                                     </TouchableOpacity>
-                                    <Text key={i} style={styles.text}>{v.title}</Text>
+                                    {/* edit */}
+                                    {v.edit ? <TouchableOpacity style={{ marginLeft: 14 }} onPress={() => this.update_todos(i)}>
+                                        <MaterialIcons
+                                            name='done'
+                                            color='#fff'
+                                            size={22}
+                                        />
+                                    </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity style={{ marginLeft: 14 }} onPress={() => this.edit_todos(i, v.title)}>
+                                            <MaterialCommunityIcons
+                                                name='circle-edit-outline'
+                                                color='#fff'
+                                                size={22}
+                                            />
+                                        </TouchableOpacity>
+                                    }
+                                    <Text key={i} style={styles.text}>
+                                        {v.edit ? <Form>
+                                            <Item>
+                                                <Input
+                                                    style={{ color: '#fff' }}
+                                                    returnKeyType='go'
+                                                    maxLength={30}
+                                                    placeholder='write here'
+                                                    onChangeText={(e) => this.handle_editChange(e, i)}
+                                                />
+                                            </Item>
+                                        </Form>
+                                            : v.title
+                                        }
+                                    </Text>
                                 </View>
                             })}
                         </View>
@@ -94,22 +128,22 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'rgb(24,24,24)',
-        color: '#fff',
+        color: '#fff',        
     },
 
     text: {
         color: "#fff",
         fontSize: 15,
         marginLeft: 15,
-        textTransform: 'capitalize'
+        textTransform: 'capitalize',        
     },
 
-    content: {
-        paddingLeft: 50,
-        paddingRight: 50
+    content: {        
+        alignItems:'center',        
     },
-
-    items: {
+    items: {                
+        width:330,        
+        alignItems:'center',        
     },
 
     withTextIcon: {
@@ -121,21 +155,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: 'pink',
         borderRadius: 10,
-        borderStyle: 'dashed'
+        borderStyle: 'dashed',
+        flexWrap: 'wrap',        
+        width:320,        
     },
-    add_todo: {
-        paddingHorizontal: 30,
-        paddingBottom: 18
-    },
-    btn: {
-        backgroundColor: 'coral',
-        padding: 10,
-        marginTop: 15,
-        marginHorizontal: 20,
-    },
-    btn_text: {
-        color: '#fff',
-        textAlign: 'center',
-        fontSize: 17,
-    }
 });
